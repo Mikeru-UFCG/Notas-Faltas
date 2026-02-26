@@ -10,10 +10,11 @@ const NOTE_REGEX = /^(10(\.0)?|[0-9](\.[0-9])?)$/;
 
 export function GradesEntry() {
   const navigate = useNavigate();
-  const { selectedStudent, updateGrades, students } = useAcademic();
+  const { selectedStudent, updateGrades, students, setSelectedStudentId } = useAcademic();
 
   const [form, setForm] = useState(selectedStudent.grades);
   const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     setForm(selectedStudent.grades);
@@ -39,6 +40,21 @@ export function GradesEntry() {
     navigate("/notas/sucesso");
   };
 
+  const handleSearch = (value: string) => {
+    setSearch(value);
+
+    const term = value.toLowerCase().trim();
+    if (!term) return;
+
+    const matchedStudent = students.find(
+      (student) => student.nome.toLowerCase().includes(term) || student.matricula.includes(term)
+    );
+
+    if (matchedStudent) {
+      setSelectedStudentId(matchedStudent.id);
+    }
+  };
+
   const mediaTurma =
     students.length > 0
       ? (
@@ -52,6 +68,19 @@ export function GradesEntry() {
   return (
     <section className={styles.page}>
       <h1>Lançamento de Notas</h1>
+
+      <article className={styles.card}>
+        <label className={styles.filterField} htmlFor="buscar-aluno-notas">
+          Buscar aluno
+          <input
+            id="buscar-aluno-notas"
+            type="search"
+            placeholder="Digite nome ou matrícula"
+            value={search}
+            onChange={(e) => handleSearch(e.target.value)}
+          />
+        </label>
+      </article>
 
       <StudentCarousel />
 
@@ -87,8 +116,16 @@ export function GradesEntry() {
       <SummaryCards
         items={[
           { label: "Média da Turma", value: mediaTurma, tone: "primary" },
-          { label: "Acima de 7", value: `${students.filter((s) => averageGrade(s) >= 7).length}`, tone: "success" },
-          { label: "Abaixo de 6", value: `${students.filter((s) => averageGrade(s) < 6).length}`, tone: "error" },
+          {
+            label: "Acima de 7",
+            value: `${students.filter((s) => averageGrade(s) >= 7).length}`,
+            tone: "success",
+          },
+          {
+            label: "Abaixo de 6",
+            value: `${students.filter((s) => averageGrade(s) < 6).length}`,
+            tone: "error",
+          },
         ]}
       />
 
