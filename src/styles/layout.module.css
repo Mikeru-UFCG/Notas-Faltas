@@ -1,0 +1,23 @@
+.desktopFrame {
+    width: 1440px;
+    min-height: 1024px;
+    margin: 0 auto;
+    position: relative;
+    background: var(--bg);
+  }
+  
+  .mainContent {
+    margin-left: 240px;
+    padding-top: 84px;
+  }
+  
+  .gridContainer {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 16px;
+    padding: 24px;
+  }
+  
+  .gridContainer > * {
+    grid-column: 1 / -1;
+  }

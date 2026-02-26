@@ -1,104 +1,76 @@
-import { MetricCard } from "../components/MetricCard";
-import { studentsData } from "../data/students";
+import { Link } from "react-router";
+import { SummaryCards } from "../components/SummaryCards";
+import { attendancePercent, averageGrade, useAcademic } from "../store/AcademicContext";
+import styles from "../../styles/pages.module.css";
 
 export function Dashboard() {
-  // Calculate metrics
-  const totalStudents = studentsData.length;
-  const studentsWithGrades = studentsData.filter(s => s.media !== null).length;
-  const averageGrade = studentsData
-    .filter(s => s.media !== null)
-    .reduce((sum, s) => sum + (s.media || 0), 0) / studentsWithGrades || 0;
-  const pendingGrades = totalStudents - studentsWithGrades;
-  const totalPresences = studentsData.reduce((sum, s) => sum + s.presencas, 0);
+  const { students } = useAcademic();
+
+  const mediaGeral =
+    students.length > 0
+      ? (
+          students.reduce((acc, student) => acc + averageGrade(student), 0) /
+          students.length
+        ).toFixed(1)
+      : "0.0";
+
+  const presencas = students.reduce((acc, student) => acc + student.presencas, 0);
+
+  const totalPresenca =
+    students.length > 0
+      ? (
+          students.reduce((acc, student) => acc + attendancePercent(student), 0) /
+          students.length
+        ).toFixed(1)
+      : "0.0";
 
   return (
-    <div className="p-8 pt-24">
-      <div className="max-w-[1440px] mx-auto">
-        {/* Page Title */}
-        <div className="mb-8">
-          <h1 className="text-2xl text-gray-900 mb-2">Dashboard</h1>
-          <p className="text-sm text-gray-600">Visão geral do desempenho da turma</p>
-        </div>
+    <section className={styles.page}>
+      <h1>Dashboard Acadêmico</h1>
 
-        {/* Metrics Grid */}
-        <div className="grid grid-cols-12 gap-6 mb-8">
-          <div className="col-span-3">
-            <MetricCard
-              title="Média Geral"
-              value={averageGrade.toFixed(1)}
-              color={averageGrade >= 7 ? "green" : "red"}
-              subtitle={`${studentsWithGrades} de ${totalStudents} alunos`}
-            />
-          </div>
-          <div className="col-span-3">
-            <MetricCard
-              title="Notas Lançadas"
-              value={`${studentsWithGrades}/${totalStudents}`}
-              color="blue"
-            />
-          </div>
-          <div className="col-span-3">
-            <MetricCard
-              title="Pendências"
-              value={pendingGrades}
-              color={pendingGrades > 0 ? "red" : "green"}
-              subtitle="Notas a lançar"
-            />
-          </div>
-          <div className="col-span-3">
-            <MetricCard
-              title="Total de Presenças"
-              value={totalPresences}
-              color="green"
-            />
-          </div>
-        </div>
+      <SummaryCards
+        items={[
+          { label: "Média Geral", value: mediaGeral, tone: "primary" },
+          { label: "Notas Lançadas", value: `${students.length * 3}`, tone: "success" },
+          { label: "Pendências", value: "2", tone: "error" },
+          { label: "Total de Presenças", value: `${presencas} (${totalPresenca}%)`, tone: "success" },
+        ]}
+      />
 
-        {/* Students Overview */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-          <h2 className="text-lg text-gray-900 mb-4">Resumo da Turma</h2>
-          <div className="space-y-4">
-            {studentsData.map((student) => (
-              <div key={student.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                <div className="flex items-center gap-4">
-                  <img
-                    src={student.foto}
-                    alt={student.nome}
-                    className="w-12 h-12 rounded-full object-cover"
-                  />
-                  <div>
-                    <p className="text-sm text-gray-900">{student.nome}</p>
-                    <p className="text-xs text-gray-500">{student.matricula}</p>
-                  </div>
+      <div className={styles.grid2}>
+        <article className={styles.card}>
+          <h2>Alunos</h2>
+
+          <ul className={styles.miniList}>
+            {students.map((student) => (
+              <li key={student.id}>
+                <img src={student.avatar} alt={student.nome} />
+                <div>
+                  <strong>{student.nome}</strong>
+                  <span>{student.matricula}</span>
                 </div>
-                <div className="flex items-center gap-8">
-                  <div className="text-right">
-                    <p className="text-xs text-gray-500">Média</p>
-                    <p className={`text-sm ${
-                      student.media === null ? 'text-gray-400' : 
-                      student.media >= 7 ? 'text-green-600' : 'text-red-600'
-                    }`}>
-                      {student.media !== null ? student.media.toFixed(1) : '-'}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xs text-gray-500">Frequência</p>
-                    <p className={`text-sm ${
-                      student.frequenciaPercentual >= 75 ? 'text-green-600' : 'text-red-600'
-                    }`}>
-                      {student.frequenciaPercentual.toFixed(1)}%
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xs text-gray-500">Faltas</p>
-                    <p className="text-sm text-gray-900">{student.faltas}</p>
-                  </div>
-                </div>
-              </div>
+                <small>Média {averageGrade(student).toFixed(1)}</small>
+              </li>
             ))}
+          </ul>
+        </article>
+
+        <article className={styles.card}>
+          <h2>Ações rápidas</h2>
+
+          <div className={styles.actionsColumn}>
+            <Link to="/notas" className={styles.actionBtn}>
+              Ir para Notas
+            </Link>
+            <Link to="/frequencia" className={styles.actionBtn}>
+              Ir para Frequência
+            </Link>
+            <Link to="/planilha" className={styles.actionBtn}>
+              Abrir Planilha
+            </Link>
           </div>
-        </div>
+        </article>
       </div>
-    </div>
+    </section>
   );
 }

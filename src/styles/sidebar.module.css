@@ -1,0 +1,21 @@
+.sidebar {
+    position: fixed;
+    top: 84px;
+    left: calc(50% - 720px);
+    width: 240px;
+    height: calc(100% - 84px);
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 20px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .link {
+    color: var(--text);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  
+  .active { background: #e8eefb; color: var(--primary); font-weight: 600; }

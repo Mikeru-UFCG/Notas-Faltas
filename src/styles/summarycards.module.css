@@ -1,0 +1,13 @@
+.wrap { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 4px 14px rgba(31,79,168,0.06);
+}
+.label { color: var(--muted); margin: 0 0 8px; }
+.value { font-size: 24px; }
+.primary { border-top: 3px solid var(--primary); }
+.success { border-top: 3px solid var(--success); }
+.error { border-top: 3px solid var(--error); }

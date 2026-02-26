@@ -4,6 +4,9 @@ import { Dashboard } from "./pages/Dashboard";
 import { GradesEntry } from "./pages/GradesEntry";
 import { AttendanceRegistry } from "./pages/AttendanceRegistry";
 import { Spreadsheet } from "./pages/Spreadsheet";
+import { StudentDetail } from "./pages/StudentDetail";
+import { SuccessNote } from "./pages/SuccessNote";
+import { SuccessAttendance } from "./pages/SuccessAttendance";
 
 export const router = createBrowserRouter([
   {
@@ -11,8 +14,11 @@ export const router = createBrowserRouter([
     Component: Layout,
     children: [
       { index: true, Component: Dashboard },
-      { path: "lancamento-notas", Component: GradesEntry },
-      { path: "registro-frequencia", Component: AttendanceRegistry },
+      { path: "notas", Component: GradesEntry },
+      { path: "alunos/:id", Component: StudentDetail },
+      { path: "notas/sucesso", Component: SuccessNote },
+      { path: "frequencia", Component: AttendanceRegistry },
+      { path: "frequencia/sucesso", Component: SuccessAttendance },
       { path: "planilha", Component: Spreadsheet },
     ],
   },
